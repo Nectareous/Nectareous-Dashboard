@@ -26,18 +26,12 @@ const WalletConnectionChecker: React.FC<WalletConnectionCheckerProps> = ({
         if (hasReferralInURL()) {
           const referralInfo = extractReferralFromURL();
           if (referralInfo) {
-            console.log("Referral detected:", referralInfo);
             storeReferralInfo(referralInfo);
           }
         }
 
         const storedWalletRdns = localStorage.getItem("selectedWalletRdns");
         const currentAccount = localStorage.getItem("currentAccount");
-
-        console.log("Checking stored connection:", {
-          storedWalletRdns,
-          currentAccount,
-        });
 
         // If we have both wallet selection and account stored, try to reconnect
         if (storedWalletRdns && currentAccount) {
@@ -57,7 +51,6 @@ const WalletConnectionChecker: React.FC<WalletConnectionCheckerProps> = ({
               const accounts = await provider.request({
                 method: "eth_accounts",
               });
-              console.log("Current accounts:", accounts);
 
               if (
                 accounts &&

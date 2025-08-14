@@ -62,8 +62,6 @@ const MultiWallet: React.FC = () => {
             provider,
           });
           setWallets([...detectedWallets]);
-
-          console.log("Current wallets list:", [...detectedWallets]);
         }
       };
 

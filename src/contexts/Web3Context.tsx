@@ -408,10 +408,8 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
       }
 
       const userData = await contract.methods.users(address).call();
-      console.log("User data:", userData);
 
       const isRegistered = userData && userData.isExist === true;
-      console.log(`User ${address} registration status:`, isRegistered);
 
       return isRegistered;
     } catch (error) {
