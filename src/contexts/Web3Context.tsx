@@ -328,7 +328,6 @@ export const Web3Provider: React.FC<Web3ProviderProps> = ({ children }) => {
   };
 
   const initializeWeb3 = async () => {
-    console.log("Initializing Web3 with walletProvider:", walletProvider);
     if (walletProvider) {
       const success = await checkNetworkAndInitialize(walletProvider);
       if (success) {
