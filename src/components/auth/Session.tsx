@@ -10,6 +10,7 @@ const Session: React.FC = () => {
   const [walletAddress, setWalletAddress] = useState<string>("");
   const [currentNetwork, setCurrentNetwork] = useState<string>("Unknown");
   const [networkId, setNetworkId] = useState<number>(0);
+  const [connectionAttempted, setConnectionAttempted] = useState(false);
   const {
     account,
     connectWallet,
@@ -24,20 +25,51 @@ const Session: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const storedAccount = localStorage.getItem("currentAccount");
+    const storedWalletRdns = localStorage.getItem("selectedWalletRdns");
+
+    // If no stored wallet data, redirect to home
+    if (!storedAccount && !storedWalletRdns && !connectionAttempted) {
+      console.log("No stored wallet data, redirecting to home");
+      navigate("/");
+      return;
+    }
+
+    // If we have stored data but no wallet provider, try to restore
+    if (
+      (storedAccount || storedWalletRdns) &&
+      !walletProvider &&
+      !connectionAttempted
+    ) {
+      // Only call restoreWalletConnection if we have a valid rdns
+      if (storedWalletRdns) {
+        restoreWalletConnection(storedWalletRdns);
+      }
+      setConnectionAttempted(true);
+    }
+
+    // If we have a wallet provider but no account, try to connect
     if (walletProvider && !account) {
       initializeConnection();
     } else if (account) {
       setWalletAddress(account);
       checkNetwork();
     }
+  }, [walletProvider, account, contract, connectionAttempted, navigate]);
 
-    const storedAccount = localStorage.getItem("currentAccount");
-    const storedWalletRdns = localStorage.getItem("selectedWalletRdns");
+  // Add this useEffect to handle the case where restoration fails
+  useEffect(() => {
+    // Set a timeout to redirect if no connection is established after a reasonable time
+    const redirectTimer = setTimeout(() => {
+      if (!account && !walletProvider && connectionAttempted) {
+        console.log("Wallet connection timeout, redirecting to home");
+        toast.error("Failed to restore wallet connection");
+        navigate("/");
+      }
+    }, 5000); // 5 second timeout
 
-    if (storedAccount && storedWalletRdns && !walletProvider) {
-      restoreWalletConnection(storedWalletRdns);
-    }
-  }, [walletProvider, account, contract]);
+    return () => clearTimeout(redirectTimer);
+  }, [account, walletProvider, connectionAttempted, navigate]);
 
   useEffect(() => {
     if (account) {
@@ -181,9 +213,13 @@ const Session: React.FC = () => {
       if (provider) {
         setWalletProvider(provider);
         console.log("Wallet provider restored for session");
+      } else {
+        console.log("Failed to restore wallet provider");
+        setConnectionAttempted(true);
       }
     } catch (error) {
       console.error("Failed to restore wallet connection:", error);
+      setConnectionAttempted(true);
     }
   };
 
@@ -282,10 +318,16 @@ const Session: React.FC = () => {
               </div>
             )}
           </div>
-        ) : (
+        ) : connectionAttempted ? (
           <div className="text-center py-8">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
             <p className="text-gray-400">Connecting to wallet...</p>
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-400">
+              Redirecting to wallet connection page...
+            </p>
           </div>
         )}
       </div>

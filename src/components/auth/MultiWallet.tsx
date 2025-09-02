@@ -110,7 +110,7 @@ const MultiWallet: React.FC = () => {
 
     try {
       // Add a small delay to prevent race conditions
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Set the wallet provider in context
       setWalletProvider(selectedWallet.provider);
@@ -141,7 +141,7 @@ const MultiWallet: React.FC = () => {
         localStorage.setItem("currentAccount", accounts[0]);
         toast.success(`Connected to ${selectedWallet.name}`);
         // Add small delay before navigation
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         navigate("/session");
       } else {
         toast.error("No accounts found");
