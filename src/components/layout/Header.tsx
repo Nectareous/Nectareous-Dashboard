@@ -1,7 +1,7 @@
 // src/components/layout/Header.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Settings, User as UserIcon, LogOut, Wallet, Copy, TrendingUp, RefreshCw, Menu } from 'lucide-react';
+import { User as UserIcon, LogOut, Wallet, Copy, TrendingUp, RefreshCw, Menu } from 'lucide-react';
 import { useWeb3 } from '../../hooks/useWeb3';
 import { usePrice } from '../../hooks/usePrice';
 import { toast } from 'react-toastify';
@@ -129,13 +129,6 @@ const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
               </button>
             </div>
           )}
-          
-          <div className="hidden sm:block">
-            <Bell className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-          </div>
-          <div className="hidden sm:block">
-            <Settings className="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-colors" />
-          </div>
           
           {/* User Menu */}
           <div className="relative">
